@@ -92,7 +92,7 @@
           "script": {
             "exec": [
               "pm.test('Status is 200', () => pm.response.to.have.status(200));",
-              "const data = pm.response.json();",
+              "var data = pm.response.json();",
               "pm.test('Response has ID', () => pm.expect(data).to.have.property('id'));",
               "pm.environment.set('imageId', data.id);"
             ],
@@ -122,7 +122,7 @@
           "script": {
             "exec": [
               "pm.test('Status is 200', () => pm.response.to.have.status(200));",
-              "const data = pm.response.json();",
+              "var data = pm.response.json();",
               "pm.test('Returns items list', () => pm.expect(data).to.have.property('items'));",
               "pm.test('Total is a number', () => pm.expect(data.total).to.be.a('number'));"
             ],
@@ -153,7 +153,7 @@
           "script": {
             "exec": [
               "pm.test('Status is 200', () => pm.response.to.have.status(200));",
-              "const data = pm.response.json();",
+              "var data = pm.response.json();",
               "pm.test('ID matches', () => pm.expect(data.id).to.eql(parseInt(pm.environment.get('imageId'))));"
             ],
             "type": "text/javascript"
