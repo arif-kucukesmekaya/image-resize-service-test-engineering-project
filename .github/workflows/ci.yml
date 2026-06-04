@@ -70,10 +70,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Start Services
-        run: docker compose up -d app localstack db
-      - name: Wait for startup
-        run: sleep 10
+      - name: Start Database and LocalStack
+        run: docker compose up -d db localstack
+      - name: Wait for database and localstack to initialize
+        run: sleep 12
+      - name: Start FastAPI App
+        run: docker compose up -d app
+      - name: Wait for app startup
+        run: sleep 5
       - name: Run Postman Tests via Newman
         run: npx newman run postman/collection.json --env-var baseUrl=http://localhost:8000
       - name: Stop Services
@@ -84,10 +88,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Start Services
+      - name: Start Database and LocalStack
+        run: docker compose up -d db localstack
+      - name: Wait for database and localstack to initialize
+        run: sleep 12
+      - name: Start All Services (App, Prometheus, Grafana)
         run: docker compose up -d
-      - name: Wait for startup
-        run: sleep 10
+      - name: Wait for app startup
+        run: sleep 5
       - name: Health Check Smoke Test
         run: curl -f http://localhost:8000/health
       - name: Print success message
