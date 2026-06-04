@@ -8,9 +8,7 @@
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-A fully containerized, asynchronous, cloud-native image resizing microservice designed with modern **Test Engineering** principles. This project serves as a comprehensive case study for building robust cloud architectures verified through unit, integration, end-to-end (E2E) browser automation, API integration, and load testing pipelines.
-
-Developed under the course **"Test Engineering in Cloud Architectures"** at Marmara University.
+A fully containerized, asynchronous, cloud-native image resizing microservice designed with modern **Test Engineering** principles. This project serves as a comprehensive case study for building robust cloud architectures verified through unit, integration, end-to-end (E2E) browser automation, API integration, and load testing pipelines. 
 
 ---
 
