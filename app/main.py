@@ -1,4 +1,7 @@
 # Bu dosya: FastAPI ana uygulama giriş noktası ve endpoint tanımları
+
+# arif
+
 import os
 import time
 import traceback
@@ -124,7 +127,7 @@ async def resize_image(
     # Extract original dimensions to validate file content is a valid image
     try:
         orig_w, orig_h = resize_service.get_image_dimensions(contents)
-    except ValueError as e:
+    except ValueError:
         RESIZE_TOTAL.labels(status="failed", format=format).inc()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -155,7 +158,7 @@ async def resize_image(
     s3_start = time.perf_counter()
     try:
         s3_service.upload(S3_BUCKET, unique_key, resized_data, content_type)
-    except Exception as e:
+    except Exception:
         RESIZE_TOTAL.labels(status="failed", format=format).inc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -180,7 +183,7 @@ async def resize_image(
         db.add(record)
         db.commit()
         db.refresh(record)
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         # Rollback S3 upload if metadata database save fails
         try:
@@ -216,7 +219,7 @@ def get_images(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         total = db.query(ImageRecord).count()
         records = db.query(ImageRecord).offset(skip).limit(limit).all()
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -246,7 +249,7 @@ def get_image(image_id: int, db: Session = Depends(get_db)):
     """
     try:
         record = db.query(ImageRecord).filter(ImageRecord.id == image_id).first()
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -278,7 +281,7 @@ def delete_image(image_id: int, db: Session = Depends(get_db)):
     """
     try:
         record = db.query(ImageRecord).filter(ImageRecord.id == image_id).first()
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -301,7 +304,7 @@ def delete_image(image_id: int, db: Session = Depends(get_db)):
     try:
         db.delete(record)
         db.commit()
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
