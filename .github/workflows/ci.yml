@@ -80,6 +80,13 @@ jobs:
         run: sleep 5
       - name: Run Postman Tests via Newman
         run: npx newman run postman/collection.json --env-var baseUrl=http://localhost:8000 --allow-file-uploads
+      - name: Print container logs on failure
+        if: failure()
+        run: |
+          docker compose ps
+          docker compose logs app
+          docker compose logs db
+          docker compose logs localstack
       - name: Stop Services
         run: docker compose down
 
@@ -98,6 +105,13 @@ jobs:
         run: sleep 5
       - name: Health Check Smoke Test
         run: curl -f http://localhost:8000/health
+      - name: Print container logs on failure
+        if: failure()
+        run: |
+          docker compose ps
+          docker compose logs app
+          docker compose logs db
+          docker compose logs localstack
       - name: Print success message
         run: echo "Smoke test passed!"
       - name: Stop Services
