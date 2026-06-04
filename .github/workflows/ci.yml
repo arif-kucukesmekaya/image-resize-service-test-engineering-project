@@ -11,9 +11,6 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: image-resize-service
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,9 +24,6 @@ jobs:
   test:
     needs: lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: image-resize-service
     services:
       localstack:
         image: localstack/localstack:3
@@ -50,14 +44,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: image-resize-service/htmlcov/
+          path: htmlcov/
 
   docker-build:
     needs: test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: image-resize-service
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -70,14 +61,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: docker-image
-          path: image-resize-service/image.tar.gz
+          path: image.tar.gz
 
   newman:
     needs: docker-build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: image-resize-service
     steps:
       - uses: actions/checkout@v4
       - name: Start Services
@@ -92,9 +80,6 @@ jobs:
   smoke:
     needs: newman
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: image-resize-service
     steps:
       - uses: actions/checkout@v4
       - name: Start Services
