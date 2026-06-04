@@ -1,0 +1,11 @@
+# Bu dosya: Kubernetes ConfigMap tanımı
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: image-resize-config
+  namespace: default
+data:
+  AWS_ENDPOINT_URL: "http://localstack-service:4566"
+  AWS_DEFAULT_REGION: "us-east-1"
+  S3_BUCKET: "image-resize-bucket"
+  LOG_LEVEL: "info"

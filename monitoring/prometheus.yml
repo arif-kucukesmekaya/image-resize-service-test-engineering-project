@@ -1,0 +1,10 @@
+# Bu dosya: Prometheus metrik toplama (scrape) konfigürasyonu
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "image-resize-service"
+    static_configs:
+      - targets: ["app:8000"]
+    metrics_path: /metrics

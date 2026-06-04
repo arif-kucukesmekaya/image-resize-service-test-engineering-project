@@ -1,0 +1,51 @@
+# Bu dosya: Kubernetes Deployment tanımı
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-resize-service
+  labels:
+    app: image-resize-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: image-resize-service
+  template:
+    metadata:
+      labels:
+        app: image-resize-service
+    spec:
+      containers:
+      - name: app
+        image: image-resize-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: image-resize-config
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: database-url
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"

@@ -1,0 +1,461 @@
+<!-- Bu dosya: Web arayüzü (HTML5, CSS3, Vanilla JS) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Image Resizer Service</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #8b5cf6;
+            --primary-hover: #a78bfa;
+            --danger: #ef4444;
+            --danger-hover: #f87171;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input[type="file"], input[type="number"], select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+            width: 100%;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            color: var(--text-main);
+            cursor: pointer;
+            margin-right: 1rem;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--primary-hover);
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--text-main);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* Result Card styles */
+        #result-card {
+            border-left: 4px solid var(--success);
+            margin-top: 1.5rem;
+        }
+
+        #result-card a {
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        #result-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Table styles */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            font-size: 0.95rem;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+
+        .delete-btn:hover {
+            background: var(--danger-hover);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .list-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Resize Service</h1>
+            <p>Premium Cloud-Native Resizing & Storage Infrastructure</p>
+        </header>
+
+        <!-- Resize Panel -->
+        <main class="card">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="file-input">Select Image</label>
+                    <input type="file" id="file-input" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="width-input">Width (px)</label>
+                    <input type="number" id="width-input" value="300" min="1" max="4096">
+                </div>
+                <div class="form-group">
+                    <label for="height-input">Height (px)</label>
+                    <input type="number" id="height-input" value="300" min="1" max="4096">
+                </div>
+                <div class="form-group full-width">
+                    <label for="format-select">Format</label>
+                    <select id="format-select">
+                        <option value="JPEG">JPEG</option>
+                        <option value="PNG">PNG</option>
+                        <option value="WEBP">WEBP</option>
+                    </select>
+                </div>
+            </div>
+            <div class="actions">
+                <button id="resize-btn">Resize & Upload</button>
+            </div>
+
+            <!-- Resized Result -->
+            <div data-testid="result-card" id="result-card" class="card" hidden></div>
+        </main>
+
+        <!-- List Panel -->
+        <section class="card">
+            <div class="list-header">
+                <h2>Resized Records</h2>
+                <button id="list-btn" class="btn-secondary">Refresh List</button>
+            </div>
+            <div class="table-container">
+                <table id="images-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Filename</th>
+                            <th>Dimensions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+
+        const fileInput = document.getElementById("file-input");
+        const widthInput = document.getElementById("width-input");
+        const heightInput = document.getElementById("height-input");
+        const formatSelect = document.getElementById("format-select");
+        const resizeBtn = document.getElementById("resize-btn");
+        const resultCard = document.getElementById("result-card");
+        const listBtn = document.getElementById("list-btn");
+        const imagesTableBody = document.querySelector("#images-table tbody");
+
+        resizeBtn.addEventListener("click", async () => {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select an image file first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            formData.append("width", widthInput.value);
+            formData.append("height", heightInput.value);
+            formData.append("format", formatSelect.value);
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/resize`, {
+                    method: "POST",
+                    body: formData
+                });
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Image resizing failed.");
+                }
+                const data = await res.json();
+
+                // Build elements securely to prevent XSS (no innerHTML)
+                resultCard.replaceChildren();
+                
+                const successTitle = document.createElement("p");
+                successTitle.style.fontWeight = "bold";
+                successTitle.style.color = "var(--success)";
+                successTitle.style.marginBottom = "0.5rem";
+                successTitle.textContent = "Image successfully resized!";
+
+                const detailsText = document.createElement("p");
+                detailsText.textContent = `New Dimensions: ${data.resized_width} x ${data.resized_height} | Size: ${(data.file_size_bytes / 1024).toFixed(2)} KB`;
+                
+                const downloadLink = document.createElement("a");
+                downloadLink.href = data.presigned_url;
+                downloadLink.textContent = "Download Resized Image";
+                downloadLink.target = "_blank";
+
+                resultCard.appendChild(successTitle);
+                resultCard.appendChild(detailsText);
+                resultCard.appendChild(downloadLink);
+                resultCard.hidden = false;
+
+                // Load fresh list
+                loadImages();
+            } catch (err) {
+                resultCard.replaceChildren();
+                const errTitle = document.createElement("p");
+                errTitle.style.color = "var(--danger)";
+                errTitle.textContent = err.message;
+                resultCard.appendChild(errTitle);
+                resultCard.hidden = false;
+            }
+        });
+
+        async function loadImages() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/images`);
+                if (!res.ok) throw new Error("Failed to fetch images.");
+                const data = await res.json();
+
+                imagesTableBody.replaceChildren();
+
+                data.items.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.setAttribute("data-testid", "image-row");
+
+                    const cellId = document.createElement("td");
+                    cellId.textContent = item.id;
+
+                    const cellName = document.createElement("td");
+                    cellName.textContent = item.original_filename;
+
+                    const cellDimensions = document.createElement("td");
+                    cellDimensions.textContent = `${item.resized_width}x${item.resized_height}`;
+
+                    const cellAction = document.createElement("td");
+                    const delBtn = document.createElement("button");
+                    delBtn.className = "delete-btn";
+                    delBtn.setAttribute("data-id", item.id);
+                    delBtn.textContent = "Delete";
+
+                    delBtn.addEventListener("click", async () => {
+                        // TODO(security): Replace native confirm() with custom modal for production
+                        if (confirm(`Are you sure you want to delete ${item.original_filename}?`)) {
+                            await deleteImage(item.id);
+                        }
+                    });
+
+                    cellAction.appendChild(delBtn);
+
+                    row.appendChild(cellId);
+                    row.appendChild(cellName);
+                    row.appendChild(cellDimensions);
+                    row.appendChild(cellAction);
+
+                    imagesTableBody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error loading images list:", err);
+            }
+        }
+
+        async function deleteImage(id) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/images/${id}`, {
+                    method: "DELETE"
+                });
+                if (res.ok) {
+                    loadImages();
+                } else {
+                    console.error("Failed to delete record.");
+                }
+            } catch (err) {
+                console.error("Delete operation error:", err);
+            }
+        }
+
+        listBtn.addEventListener("click", loadImages);
+
+        // Initial load
+        window.addEventListener("load", loadImages);
+    </script>
+</body>
+</html>

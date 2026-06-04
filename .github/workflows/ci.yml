@@ -1,0 +1,109 @@
+# Bu dosya: GitHub Actions CI/CD pipeline tanımı
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: image-resize-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Ruff
+        run: pip install ruff
+      - name: Run Ruff Linter
+        run: ruff check app/ tests/
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: image-resize-service
+    services:
+      localstack:
+        image: localstack/localstack:3
+        ports:
+          - "4566:4566"
+        env:
+          SERVICES: s3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run Pytest (Unit & Integration)
+        run: pytest tests/unit tests/integration --cov=app --cov-fail-under=70
+      - name: Upload Coverage HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: image-resize-service/htmlcov/
+
+  docker-build:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: image-resize-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker Image
+        run: docker build -t image-resize-service:${{ github.sha }} .
+      - name: Save Docker Image Archive
+        run: docker save image-resize-service:${{ github.sha }} | gzip > image.tar.gz
+      - name: Upload Docker Image Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: image-resize-service/image.tar.gz
+
+  newman:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: image-resize-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Services
+        run: docker compose up -d app localstack db
+      - name: Wait for startup
+        run: sleep 10
+      - name: Run Postman Tests via Newman
+        run: npx newman run postman/collection.json --env-var baseUrl=http://localhost:8000
+      - name: Stop Services
+        run: docker compose down
+
+  smoke:
+    needs: newman
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: image-resize-service
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Services
+        run: docker compose up -d
+      - name: Wait for startup
+        run: sleep 10
+      - name: Health Check Smoke Test
+        run: curl -f http://localhost:8000/health
+      - name: Print success message
+        run: echo "Smoke test passed!"
+      - name: Stop Services
+        run: docker compose down
