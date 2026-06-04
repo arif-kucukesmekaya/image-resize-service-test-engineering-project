@@ -1,6 +1,6 @@
 # Bu dosya: FastAPI ana uygulama giriş noktası ve endpoint tanımları
 
-# arif 
+# arif proje
 import os
 import time
 import traceback
