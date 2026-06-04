@@ -44,3 +44,13 @@ test.db
 # OS
 .DS_Store
 Thumbs.db
+
+# Presentation & LLM Helper Docs
+sunum_raporu.md
+sunum_plani.md
+sunum_hazirlama_promptu.md
+slayt_icerigi.md
+presentation_guide.md
+llm_context_and_project_deepdive.md
+hoca_istekleri_ve_komutlar.md
+canli_demo_adimlari.md
