@@ -55,7 +55,7 @@ def test_create_image_record(pg_session):
 def test_query_image_records(pg_session):
     """Creates 5 image metadata records and verifies that querying all records returns exactly 5."""
     # Seed 5 records
-    records = ImageRecordFactory.create_batch(5)
+    ImageRecordFactory.create_batch(5)
     
     # Query all
     results = pg_session.query(ImageRecord).all()
