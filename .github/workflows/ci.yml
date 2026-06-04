@@ -24,6 +24,8 @@ jobs:
   test:
     needs: lint
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
     services:
       localstack:
         image: localstack/localstack:3
