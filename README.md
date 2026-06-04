@@ -164,8 +164,4 @@ minikube service image-resize-service
 
 ---
 
-## 👥 Contributors
 
-* **Developer:** Arif Küçükeşmekaya
-* **Advisor:** Dr. Öğr. Üyesi Büşra Ayaksız
-* **University:** Marmara University, Faculty of Engineering, Department of Computer Engineering
